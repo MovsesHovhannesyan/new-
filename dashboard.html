@@ -25,52 +25,85 @@
   <main class="page">
     <section class="page-header">
       <div>
-        <p class="eyebrow">This week</p>
-        <h1>Your mindful schedule</h1>
+        <p class="eyebrow">Your month at a glance</p>
+        <h1>Keep every commitment in view</h1>
       </div>
-      <button class="btn primary" data-open="schedule-modal">Add event</button>
+      <button class="btn primary" data-open="calendar-modal">Add to calendar</button>
     </section>
 
-    <section class="timeline">
-      <header class="timeline-header">
-        <button class="btn ghost" data-action="previous">Previous</button>
-        <h2 class="week-label"></h2>
-        <button class="btn ghost" data-action="next">Next</button>
+    <section class="calendar">
+      <header class="calendar-header">
+        <button class="btn ghost" data-calendar-nav="previous">Previous</button>
+        <div class="calendar-heading">
+          <h2 class="calendar-month" id="calendar-month"></h2>
+          <p class="calendar-note">See classes, tasks, and deadlines together. Tap assignments to celebrate progress.</p>
+        </div>
+        <button class="btn ghost" data-calendar-nav="next">Next</button>
       </header>
-      <div class="timeline-grid" id="schedule-list"></div>
+      <div class="calendar-weekdays" aria-hidden="true">
+        <span>Mon</span>
+        <span>Tue</span>
+        <span>Wed</span>
+        <span>Thu</span>
+        <span>Fri</span>
+        <span>Sat</span>
+        <span>Sun</span>
+      </div>
+      <div class="calendar-grid" id="calendar-grid"></div>
     </section>
   </main>
 
-  <div class="modal" id="schedule-modal" hidden>
+  <div class="modal" id="calendar-modal" hidden>
     <div class="modal-content">
       <button class="modal-close" data-close>&times;</button>
-      <h2>Add schedule item</h2>
-      <form id="schedule-form" class="stack">
+      <h2>Add to your calendar</h2>
+      <form id="calendar-form" class="stack">
         <label>
           <span>Title</span>
           <input type="text" name="title" required>
         </label>
         <label>
-          <span>Type</span>
-          <select name="type">
-            <option value="class">Class</option>
-            <option value="study">Study</option>
-            <option value="meeting">Meeting</option>
-            <option value="personal">Personal</option>
+          <span>What are you adding?</span>
+          <select name="entry-type" id="calendar-entry-type">
+            <option value="schedule">Schedule event</option>
+            <option value="assignment">Assignment or deadline</option>
           </select>
         </label>
-        <label>
-          <span>Date</span>
-          <input type="date" name="date" required>
-        </label>
-        <label>
-          <span>Start time</span>
-          <input type="time" name="start" required>
-        </label>
-        <label>
-          <span>End time</span>
-          <input type="time" name="end" required>
-        </label>
+        <div class="stack" data-entry-group="schedule">
+          <label>
+            <span>Category</span>
+            <select name="event-type" data-required>
+              <option value="class">Class</option>
+              <option value="study">Study</option>
+              <option value="meeting">Meeting</option>
+              <option value="personal">Personal</option>
+            </select>
+          </label>
+          <label>
+            <span>Date</span>
+            <input type="date" name="event-date" data-required>
+          </label>
+          <div class="split">
+            <label>
+              <span>Start time</span>
+              <input type="time" name="start" data-required>
+            </label>
+            <label>
+              <span>End time</span>
+              <input type="time" name="end" data-required>
+            </label>
+          </div>
+        </div>
+        <div class="stack" data-entry-group="assignment" hidden>
+          <label>
+            <span>Course</span>
+            <input type="text" name="course" placeholder="Subject or class" data-required>
+          </label>
+          <label>
+            <span>Due date</span>
+            <input type="date" name="due-date" data-required>
+          </label>
+        </div>
         <label>
           <span>Notes</span>
           <textarea name="notes" rows="3" placeholder="Optional details"></textarea>

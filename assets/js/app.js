@@ -98,133 +98,293 @@ function formatTime(time) {
   }).format(date);
 }
 
-function startOfWeek(date) {
+function toDateKey(value) {
+  if (!value) return null;
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
+  }
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function startOfMonth(date) {
   const result = new Date(date);
-  const day = result.getDay();
-  const diff = (day === 0 ? -6 : 1) - day;
-  result.setDate(result.getDate() + diff);
+  result.setDate(1);
   result.setHours(0, 0, 0, 0);
   return result;
 }
 
+function formatMonthLabel(date) {
+  return new Intl.DateTimeFormat(undefined, {
+    month: "long",
+    year: "numeric"
+  }).format(date);
+}
 
-function renderSchedulePage() {
-  const scheduleList = document.getElementById("schedule-list");
-  const weekLabel = document.querySelector(".week-label");
-  const form = document.getElementById("schedule-form");
-  const modal = document.getElementById("schedule-modal");
-  let schedule = storage.get(scheduleKey, []);
-  let currentWeekStart = startOfWeek(new Date());
-  let editingId = null;
 
-  function entriesForWeek(startDate) {
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 6);
-    return schedule.filter(item => {
-      const date = new Date(item.date);
-      return date >= startDate && date <= endDate;
-    }).sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
+function renderCalendarPage() {
+  const calendarGrid = document.getElementById("calendar-grid");
+  const monthHeading = document.getElementById("calendar-month");
+  const modal = document.getElementById("calendar-modal");
+  const form = document.getElementById("calendar-form");
+  const typeSelect = document.getElementById("calendar-entry-type");
+  const scheduleGroups = form?.querySelectorAll('[data-entry-group="schedule"]');
+  const assignmentGroups = form?.querySelectorAll('[data-entry-group="assignment"]');
+  const scheduleRequired = form?.querySelectorAll('[data-entry-group="schedule"] [data-required]');
+  const assignmentRequired = form?.querySelectorAll('[data-entry-group="assignment"] [data-required]');
+
+  if (!calendarGrid || !monthHeading) return;
+
+  let focusDate = startOfMonth(new Date());
+
+  function removeScheduleItem(id) {
+    const updated = storage.get(scheduleKey, []).filter(item => item.id !== id);
+    storage.set(scheduleKey, updated);
+    render();
   }
 
-  function renderWeek() {
-    if (!scheduleList) return;
-    const entries = entriesForWeek(currentWeekStart);
-    weekLabel.textContent = `${formatDate(currentWeekStart)} – ${formatDate(new Date(currentWeekStart.getTime() + 6 * 86400000))}`;
+  function removeAssignmentItem(id) {
+    const updated = storage.get(assignmentKey, []).filter(item => item.id !== id);
+    storage.set(assignmentKey, updated);
+    render();
+  }
 
-    scheduleList.innerHTML = "";
-    if (!entries.length) {
-      scheduleList.innerHTML = `<div class="empty-state">No events this week. Add what matters most to you.</div>`;
-      return;
-    }
+  function toggleAssignmentCompletion(id) {
+    const updated = storage.get(assignmentKey, []).map(item => item.id === id ? { ...item, completed: !item.completed } : item);
+    storage.set(assignmentKey, updated);
+    render();
+  }
 
-    entries.forEach(item => {
-      const card = document.createElement("article");
-      card.className = "timeline-card";
-      card.innerHTML = `
-        <div class="times">
-          <div>${formatDate(item.date)}</div>
-          <div>${formatTime(item.start)} – ${formatTime(item.end)}</div>
-        </div>
-        <div class="details">
-          <h3>${item.title}</h3>
-          <p class="tag">${item.type}</p>
-          ${item.notes ? `<p class="notes">${item.notes}</p>` : ""}
-        </div>
-        <div class="actions">
-          <button class="chip-action" data-edit="${item.id}">Edit</button>
-          <button class="chip-action" data-delete="${item.id}">Remove</button>
-        </div>`;
-      scheduleList.appendChild(card);
+  function updateFieldVisibility() {
+    if (!form || !typeSelect) return;
+    const type = typeSelect.value;
+    scheduleGroups?.forEach(group => {
+      group.hidden = type !== "schedule";
+    });
+    assignmentGroups?.forEach(group => {
+      group.hidden = type !== "assignment";
+    });
+    scheduleRequired?.forEach(input => {
+      input.required = type === "schedule";
+    });
+    assignmentRequired?.forEach(input => {
+      input.required = type === "assignment";
     });
   }
 
-  document.querySelectorAll("[data-action]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const direction = btn.dataset.action;
-      if (direction === "next") {
-        currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-      } else if (direction === "previous") {
-        currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+  function render() {
+    const schedule = storage.get(scheduleKey, []);
+    const assignments = storage.get(assignmentKey, []);
+    monthHeading.textContent = formatMonthLabel(focusDate);
+
+    const monthStart = startOfMonth(focusDate);
+    const firstDay = monthStart.getDay();
+    const offset = (firstDay + 6) % 7; // start week on Monday
+    const gridStart = new Date(monthStart);
+    gridStart.setDate(monthStart.getDate() - offset);
+    const todayKey = toDateKey(new Date());
+
+    calendarGrid.innerHTML = "";
+
+    for (let index = 0; index < 42; index += 1) {
+      const day = new Date(gridStart);
+      day.setDate(gridStart.getDate() + index);
+      const dayKey = toDateKey(day);
+      const inMonth = day.getMonth() === focusDate.getMonth();
+      const daySchedule = schedule
+        .filter(item => toDateKey(item.date) === dayKey)
+        .sort((a, b) => (a.start || "").localeCompare(b.start || ""));
+      const dayAssignments = assignments
+        .filter(item => toDateKey(item.due) === dayKey)
+        .sort((a, b) => Number(a.completed) - Number(b.completed));
+
+      const cell = document.createElement("div");
+      cell.className = "calendar-day";
+      if (!inMonth) cell.classList.add("calendar-day--muted");
+      if (dayKey === todayKey) cell.classList.add("calendar-day--today");
+      cell.dataset.date = dayKey ?? "";
+
+      const header = document.createElement("header");
+      const heading = document.createElement("div");
+      heading.className = "day-heading";
+      const dayName = document.createElement("span");
+      dayName.className = "day-name";
+      dayName.textContent = new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(day);
+      const dayNumber = document.createElement("span");
+      dayNumber.className = "day-number";
+      dayNumber.textContent = day.getDate().toString();
+      heading.append(dayName, dayNumber);
+      header.appendChild(heading);
+
+      const pending = dayAssignments.filter(item => !item.completed).length;
+      if (pending) {
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = `${pending} due`;
+        header.appendChild(badge);
       }
-      renderWeek();
+
+      cell.appendChild(header);
+
+      const list = document.createElement("ul");
+      list.className = "calendar-items";
+
+      daySchedule.forEach(eventItem => {
+        const li = document.createElement("li");
+        li.className = "calendar-item schedule";
+        const timeLabel = [formatTime(eventItem.start), formatTime(eventItem.end)].filter(Boolean).join(" – ");
+        li.innerHTML = `
+          <div class="calendar-item-main">
+            <span class="calendar-dot" aria-hidden="true"></span>
+            <div class="calendar-text">
+              <span class="calendar-title">${timeLabel ? `${timeLabel} · ` : ""}${eventItem.title}</span>
+              <span class="calendar-sub">${eventItem.type}</span>
+            </div>
+          </div>
+          <button type="button" class="calendar-remove" data-remove-schedule="${eventItem.id}" aria-label="Remove ${eventItem.title}">&times;</button>`;
+        if (eventItem.notes) {
+          li.title = eventItem.notes;
+        }
+        list.appendChild(li);
+      });
+
+      dayAssignments.forEach(assignment => {
+        const li = document.createElement("li");
+        li.className = `calendar-item assignment${assignment.completed ? " completed" : ""}`;
+        li.dataset.toggleAssignment = assignment.id;
+        li.setAttribute("tabindex", "0");
+        li.setAttribute("role", "button");
+        li.setAttribute("aria-pressed", assignment.completed ? "true" : "false");
+        const course = assignment.course?.trim();
+        const status = assignment.completed ? "Completed" : "Mark complete";
+        li.innerHTML = `
+          <div class="calendar-item-main">
+            <span class="calendar-dot" aria-hidden="true"></span>
+            <div class="calendar-text">
+              <span class="calendar-title">${assignment.title}</span>
+              <span class="calendar-sub">${course ? `${course} • ${status}` : status}</span>
+            </div>
+          </div>
+          <button type="button" class="calendar-remove" data-remove-assignment="${assignment.id}" aria-label="Remove ${assignment.title}">&times;</button>`;
+        const actionHint = assignment.completed ? "Click to undo completion" : "Click to mark complete";
+        li.title = assignment.notes ? `${assignment.notes} — ${actionHint}` : actionHint;
+        list.appendChild(li);
+      });
+
+      cell.appendChild(list);
+      calendarGrid.appendChild(cell);
+    }
+  }
+
+  document.querySelectorAll('[data-calendar-nav]').forEach(button => {
+    button.addEventListener("click", () => {
+      const direction = button.dataset.calendarNav;
+      focusDate.setMonth(focusDate.getMonth() + (direction === "next" ? 1 : -1));
+      render();
     });
   });
 
-  scheduleList?.addEventListener("click", event => {
+  calendarGrid.addEventListener("click", event => {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
-    const id = target.dataset.edit || target.dataset.delete;
-    if (!id) return;
-    const item = schedule.find(entry => entry.id === id);
-    if (!item) return;
 
-    if (target.dataset.edit) {
-      editingId = id;
-      form.title.value = item.title;
-      form.type.value = item.type;
-      form.date.value = item.date;
-      form.start.value = item.start;
-      form.end.value = item.end;
-      form.notes.value = item.notes ?? "";
-      modal.hidden = false;
+    const removeSchedule = target.closest('[data-remove-schedule]');
+    if (removeSchedule) {
+      const id = removeSchedule.dataset.removeSchedule;
+      removeScheduleItem(id);
+      return;
     }
 
-    if (target.dataset.delete) {
-      schedule = schedule.filter(entry => entry.id !== id);
-      storage.set(scheduleKey, schedule);
-      renderWeek();
+    const removeAssignment = target.closest('[data-remove-assignment]');
+    if (removeAssignment) {
+      const id = removeAssignment.dataset.removeAssignment;
+      removeAssignmentItem(id);
+      return;
+    }
+
+    const toggle = target.closest('[data-toggle-assignment]');
+    if (toggle) {
+      const id = toggle.dataset.toggleAssignment;
+      toggleAssignmentCompletion(id);
+    }
+  });
+
+  calendarGrid.addEventListener("keydown", event => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const toggle = target.closest('[data-toggle-assignment]');
+    if (toggle && target === toggle) {
+      event.preventDefault();
+      const id = toggle.dataset.toggleAssignment;
+      toggleAssignmentCompletion(id);
     }
   });
 
   form?.addEventListener("submit", event => {
     event.preventDefault();
+    if (!typeSelect) return;
+    const type = typeSelect.value;
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
-    const entry = {
-      id: editingId ?? makeId(),
-      title: data.title,
-      type: data.type,
-      date: data.date,
-      start: data.start,
-      end: data.end,
-      notes: data.notes
-    };
+    const title = data.title?.toString().trim();
+    const notes = data.notes?.toString().trim();
+    const cleanNotes = notes ?? "";
 
-    schedule = storage.get(scheduleKey, []);
-    const index = schedule.findIndex(item => item.id === entry.id);
-    if (index >= 0) {
-      schedule[index] = entry;
-    } else {
-      schedule.push(entry);
+    if (!title) {
+      return;
     }
-    storage.set(scheduleKey, schedule);
-    modal.hidden = true;
+
+    if (type === "schedule") {
+      const schedule = storage.get(scheduleKey, []);
+      if (!data["event-date"] || !data.start || !data.end) {
+        return;
+      }
+      schedule.push({
+        id: makeId(),
+        title,
+        type: data["event-type"],
+        date: data["event-date"],
+        start: data.start,
+        end: data.end,
+        notes: cleanNotes
+      });
+      storage.set(scheduleKey, schedule);
+    } else {
+      const assignments = storage.get(assignmentKey, []);
+      if (!data["due-date"]) {
+        return;
+      }
+      assignments.push({
+        id: makeId(),
+        title,
+        course: data.course?.toString().trim() ?? "",
+        due: data["due-date"],
+        notes: cleanNotes,
+        completed: false
+      });
+      storage.set(assignmentKey, assignments);
+    }
+
+    if (modal) modal.hidden = true;
     form.reset();
-    editingId = null;
-    renderWeek();
+    if (typeSelect) {
+      typeSelect.value = "schedule";
+    }
+    updateFieldVisibility();
+    render();
   });
 
-  renderWeek();
+  typeSelect?.addEventListener("change", () => {
+    updateFieldVisibility();
+  });
+
+  updateFieldVisibility();
+  render();
 }
 
 function renderAssignmentsPage() {
@@ -509,7 +669,7 @@ initModals();
 
 switch (document.body.dataset.page) {
   case "dashboard":
-    renderSchedulePage();
+    renderCalendarPage();
     break;
   case "assignments":
     renderAssignmentsPage();
