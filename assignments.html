@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Schedule | Assignments</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="assignments">
+  <header class="site-header">
+    <div class="logo">Student<span>Flow</span></div>
+    <nav class="site-nav">
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="dashboard.html">Dashboard</a>
+      <a class="nav-link active" href="assignments.html">Assignments</a>
+      <a class="nav-link" href="notes.html">Notes</a>
+      <a class="nav-link" href="goals.html">Goals</a>
+      <a class="nav-link" href="settings.html">Settings</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="page-header">
+      <div>
+        <p class="eyebrow">Stay ahead</p>
+        <h1>Assignments &amp; deadlines</h1>
+      </div>
+      <button class="btn primary" data-open="assignment-modal">Add assignment</button>
+    </section>
+
+    <section class="panel">
+      <div class="progress-summary">
+        <div>
+          <p class="metric-label">Completed</p>
+          <p class="metric-value"><span id="assign-completed">0</span>/<span id="assign-total">0</span></p>
+        </div>
+        <div class="progress-bar">
+          <span id="assign-progress" style="width:0%;"></span>
+        </div>
+      </div>
+      <ul class="assignment-list" id="assignment-list"></ul>
+    </section>
+  </main>
+
+  <div class="modal" id="assignment-modal" hidden>
+    <div class="modal-content">
+      <button class="modal-close" data-close>&times;</button>
+      <h2>Add assignment</h2>
+      <form id="assignment-form" class="stack">
+        <label>
+          <span>Title</span>
+          <input type="text" name="title" required>
+        </label>
+        <label>
+          <span>Course</span>
+          <input type="text" name="course" placeholder="Subject or class" required>
+        </label>
+        <label>
+          <span>Due date</span>
+          <input type="date" name="due" required>
+        </label>
+        <label>
+          <span>Notes</span>
+          <textarea name="notes" rows="3" placeholder="Optional details"></textarea>
+        </label>
+        <button type="submit" class="btn primary">Save</button>
+      </form>
+    </div>
+  </div>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>

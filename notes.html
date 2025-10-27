@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Schedule | Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="notes">
+  <header class="site-header">
+    <div class="logo">Student<span>Flow</span></div>
+    <nav class="site-nav">
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="dashboard.html">Dashboard</a>
+      <a class="nav-link" href="assignments.html">Assignments</a>
+      <a class="nav-link active" href="notes.html">Notes</a>
+      <a class="nav-link" href="goals.html">Goals</a>
+      <a class="nav-link" href="settings.html">Settings</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="page-header">
+      <div>
+        <p class="eyebrow">Capture moments</p>
+        <h1>Notes &amp; reflections</h1>
+      </div>
+      <button class="btn primary" data-open="note-modal">New note</button>
+    </section>
+
+    <section class="panel">
+      <div class="filter-row">
+        <label>
+          <span>Filter by tag</span>
+          <select id="note-filter">
+            <option value="all">All</option>
+          </select>
+        </label>
+        <label>
+          <span>Sort</span>
+          <select id="note-sort">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+          </select>
+        </label>
+      </div>
+      <div class="note-grid" id="note-grid"></div>
+    </section>
+  </main>
+
+  <div class="modal" id="note-modal" hidden>
+    <div class="modal-content">
+      <button class="modal-close" data-close>&times;</button>
+      <h2>Create note</h2>
+      <form id="note-form" class="stack">
+        <label>
+          <span>Title</span>
+          <input type="text" name="title" required>
+        </label>
+        <label>
+          <span>Tag</span>
+          <input type="text" name="tag" placeholder="Subject, mood, or priority">
+        </label>
+        <label>
+          <span>Content</span>
+          <textarea name="content" rows="5" placeholder="What would you like to remember?" required></textarea>
+        </label>
+        <button type="submit" class="btn primary">Save note</button>
+      </form>
+    </div>
+  </div>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>

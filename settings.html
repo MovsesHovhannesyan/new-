@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Schedule | Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="settings">
+  <header class="site-header">
+    <div class="logo">Student<span>Flow</span></div>
+    <nav class="site-nav">
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="dashboard.html">Dashboard</a>
+      <a class="nav-link" href="assignments.html">Assignments</a>
+      <a class="nav-link" href="notes.html">Notes</a>
+      <a class="nav-link" href="goals.html">Goals</a>
+      <a class="nav-link active" href="settings.html">Settings</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="page-header">
+      <div>
+        <p class="eyebrow">Make it yours</p>
+        <h1>Personalize your space</h1>
+      </div>
+    </section>
+
+    <section class="panel settings-panel">
+      <form id="settings-form" class="stack">
+        <fieldset>
+          <legend>Color palette</legend>
+          <div class="option-row">
+            <label class="chip">
+              <input type="radio" name="accent" value="teal">
+              <span class="swatch" data-accent="teal"></span>
+              <span>Deep teal</span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="accent" value="lavender">
+              <span class="swatch" data-accent="lavender"></span>
+              <span>Soft lavender</span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="accent" value="blue">
+              <span class="swatch" data-accent="blue"></span>
+              <span>Muted blue</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Background depth</legend>
+          <div class="option-row">
+            <label class="chip">
+              <input type="radio" name="depth" value="midnight">
+              <span>Midnight</span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="depth" value="moonlight">
+              <span>Moonlight</span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="depth" value="dusk">
+              <span>Dusk</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Layout density</legend>
+          <div class="option-row">
+            <label class="chip">
+              <input type="radio" name="density" value="cozy">
+              <span>Cozy</span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="density" value="balanced">
+              <span>Balanced</span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="density" value="roomy">
+              <span>Roomy</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="btn primary">Save preferences</button>
+      </form>
+    </section>
+  </main>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>

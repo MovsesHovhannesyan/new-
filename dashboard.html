@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Schedule | Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="dashboard">
+  <header class="site-header">
+    <div class="logo">Student<span>Flow</span></div>
+    <nav class="site-nav">
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link active" href="dashboard.html">Dashboard</a>
+      <a class="nav-link" href="assignments.html">Assignments</a>
+      <a class="nav-link" href="notes.html">Notes</a>
+      <a class="nav-link" href="goals.html">Goals</a>
+      <a class="nav-link" href="settings.html">Settings</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="page-header">
+      <div>
+        <p class="eyebrow">Your month at a glance</p>
+        <h1>Keep every commitment in view</h1>
+      </div>
+      <button class="btn primary" data-open="calendar-modal">Add to calendar</button>
+    </section>
+
+    <section class="calendar">
+      <header class="calendar-header">
+        <button class="btn ghost" data-calendar-nav="previous">Previous</button>
+        <div class="calendar-heading">
+          <h2 class="calendar-month" id="calendar-month"></h2>
+          <p class="calendar-note">See classes, tasks, and deadlines together. Tap assignments to celebrate progress.</p>
+        </div>
+        <button class="btn ghost" data-calendar-nav="next">Next</button>
+      </header>
+      <div class="calendar-weekdays" aria-hidden="true">
+        <span>Mon</span>
+        <span>Tue</span>
+        <span>Wed</span>
+        <span>Thu</span>
+        <span>Fri</span>
+        <span>Sat</span>
+        <span>Sun</span>
+      </div>
+      <div class="calendar-grid" id="calendar-grid"></div>
+    </section>
+  </main>
+
+  <div class="modal" id="calendar-modal" hidden>
+    <div class="modal-content">
+      <button class="modal-close" data-close>&times;</button>
+      <h2>Add to your calendar</h2>
+      <form id="calendar-form" class="stack">
+        <label>
+          <span>Title</span>
+          <input type="text" name="title" required>
+        </label>
+        <label>
+          <span>What are you adding?</span>
+          <select name="entry-type" id="calendar-entry-type">
+            <option value="schedule">Schedule event</option>
+            <option value="assignment">Assignment or deadline</option>
+          </select>
+        </label>
+        <div class="stack" data-entry-group="schedule">
+          <label>
+            <span>Category</span>
+            <select name="event-type" data-required>
+              <option value="class">Class</option>
+              <option value="study">Study</option>
+              <option value="meeting">Meeting</option>
+              <option value="personal">Personal</option>
+            </select>
+          </label>
+          <label>
+            <span>Date</span>
+            <input type="date" name="event-date" data-required>
+          </label>
+          <div class="split">
+            <label>
+              <span>Start time</span>
+              <input type="time" name="start" data-required>
+            </label>
+            <label>
+              <span>End time</span>
+              <input type="time" name="end" data-required>
+            </label>
+          </div>
+        </div>
+        <div class="stack" data-entry-group="assignment" hidden>
+          <label>
+            <span>Course</span>
+            <input type="text" name="course" placeholder="Subject or class" data-required>
+          </label>
+          <label>
+            <span>Due date</span>
+            <input type="date" name="due-date" data-required>
+          </label>
+        </div>
+        <label>
+          <span>Notes</span>
+          <textarea name="notes" rows="3" placeholder="Optional details"></textarea>
+        </label>
+        <button type="submit" class="btn primary">Save</button>
+      </form>
+    </div>
+  </div>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>
