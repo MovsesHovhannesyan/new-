@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Schedule | Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="dashboard">
+  <header class="site-header">
+    <div class="logo">Student<span>Flow</span></div>
+    <nav class="site-nav">
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link active" href="dashboard.html">Dashboard</a>
+      <a class="nav-link" href="assignments.html">Assignments</a>
+      <a class="nav-link" href="notes.html">Notes</a>
+      <a class="nav-link" href="goals.html">Goals</a>
+      <a class="nav-link" href="settings.html">Settings</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="page-header">
+      <div>
+        <p class="eyebrow">This week</p>
+        <h1>Your mindful schedule</h1>
+      </div>
+      <button class="btn primary" data-open="schedule-modal">Add event</button>
+    </section>
+
+    <section class="timeline">
+      <header class="timeline-header">
+        <button class="btn ghost" data-action="previous">Previous</button>
+        <h2 class="week-label"></h2>
+        <button class="btn ghost" data-action="next">Next</button>
+      </header>
+      <div class="timeline-grid" id="schedule-list"></div>
+    </section>
+  </main>
+
+  <div class="modal" id="schedule-modal" hidden>
+    <div class="modal-content">
+      <button class="modal-close" data-close>&times;</button>
+      <h2>Add schedule item</h2>
+      <form id="schedule-form" class="stack">
+        <label>
+          <span>Title</span>
+          <input type="text" name="title" required>
+        </label>
+        <label>
+          <span>Type</span>
+          <select name="type">
+            <option value="class">Class</option>
+            <option value="study">Study</option>
+            <option value="meeting">Meeting</option>
+            <option value="personal">Personal</option>
+          </select>
+        </label>
+        <label>
+          <span>Date</span>
+          <input type="date" name="date" required>
+        </label>
+        <label>
+          <span>Start time</span>
+          <input type="time" name="start" required>
+        </label>
+        <label>
+          <span>End time</span>
+          <input type="time" name="end" required>
+        </label>
+        <label>
+          <span>Notes</span>
+          <textarea name="notes" rows="3" placeholder="Optional details"></textarea>
+        </label>
+        <button type="submit" class="btn primary">Save</button>
+      </form>
+    </div>
+  </div>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Schedule | Goals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="goals">
+  <header class="site-header">
+    <div class="logo">Student<span>Flow</span></div>
+    <nav class="site-nav">
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="dashboard.html">Dashboard</a>
+      <a class="nav-link" href="assignments.html">Assignments</a>
+      <a class="nav-link" href="notes.html">Notes</a>
+      <a class="nav-link active" href="goals.html">Goals</a>
+      <a class="nav-link" href="settings.html">Settings</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="page-header">
+      <div>
+        <p class="eyebrow">Keep growing</p>
+        <h1>Goals &amp; milestones</h1>
+      </div>
+      <button class="btn primary" data-open="goal-modal">Add goal</button>
+    </section>
+
+    <section class="panel goals-panel">
+      <div class="goal-columns">
+        <div>
+          <h2>Short-term</h2>
+          <ul class="goal-list" data-scope="short"></ul>
+        </div>
+        <div>
+          <h2>Long-term</h2>
+          <ul class="goal-list" data-scope="long"></ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="goal-modal" hidden>
+    <div class="modal-content">
+      <button class="modal-close" data-close>&times;</button>
+      <h2>Set a goal</h2>
+      <form id="goal-form" class="stack">
+        <label>
+          <span>Title</span>
+          <input type="text" name="title" required>
+        </label>
+        <label>
+          <span>Description</span>
+          <textarea name="description" rows="3" placeholder="What does success look like?" required></textarea>
+        </label>
+        <label>
+          <span>Type</span>
+          <select name="scope">
+            <option value="short">Short-term</option>
+            <option value="long">Long-term</option>
+          </select>
+        </label>
+        <label>
+          <span>Target date</span>
+          <input type="date" name="target">
+        </label>
+        <button type="submit" class="btn primary">Save goal</button>
+      </form>
+    </div>
+  </div>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>
